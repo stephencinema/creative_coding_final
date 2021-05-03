@@ -1,4 +1,6 @@
 let canvas;
+let scene = 1;
+
 let scene1_text;
 let scene2_text;
 let scene3_text;
@@ -11,7 +13,6 @@ let w = 1400;
 let h = 1000;
 
 let flying = 0;
-
 let terrain = [];
 
 function centerCanvas() { // adapted from https://stackoverflow.com/q/58548249
@@ -22,10 +23,10 @@ function centerCanvas() { // adapted from https://stackoverflow.com/q/58548249
 
 function setup() {
   frameRate(30);
-  let millisecond = millis();
-  let second = millisecond * 1000;
   canvas = createCanvas(1200, 700, WEBGL);
   centerCanvas();
+  normalMaterial();
+  cam = createCamera();
 
   cols = w / scl;
   rows = h / scl;
@@ -43,14 +44,31 @@ function setup() {
   scene1_text.textSize(40);
   scene1_text.fill(255);
   scene1_text.text('SCENE1', 150, 150);
+
+  scene2_text = createGraphics(300, 300);
+  scene2_text.textFont('Helvetica');
+  scene2_text.textAlign(CENTER);
+  scene2_text.textSize(40);
+  scene2_text.fill(0);
+  scene2_text.text('SCENE2', 150, 150);
 }
 
 function draw() {
-  background(0);
-  scene1();
-  texture(scene1_text);
-  noStroke();
-  plane(300, 300);
+  if (scene == 1) {
+    background(0);
+    scene1();
+    texture(scene1_text);
+    noStroke();
+    plane(300, 300);
+  }
+
+  if (scene == 2) {
+    background(255);
+    scene2();
+    texture(scene2_text);
+    noStroke();
+    plane(300, 300);
+  }
 }
 
 function scene1() { // code adapted from Daniel Shiffman https://thecodingtrain.com/CodingChallenges/011-perlinnoiseterrain.html
@@ -74,9 +92,27 @@ function scene1() { // code adapted from Daniel Shiffman https://thecodingtrain.
     beginShape(TRIANGLE_STRIP);
     for (var x = 0; x < cols; x++) {
       vertex(x * scl, y * scl, terrain[x][y]);
-      vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
+      vertex(x * scl, (y + 5) * scl, terrain[x][y + 6]);
     }
     endShape();
   }
   pop();
 } // end of scene 1 function
+
+function scene2() {
+  normalMaterial();
+  push();
+  translate(270, 0, 0);
+  rotateZ(frameCount * 0.01);
+  rotateX(frameCount * 0.01);
+  rotateY(frameCount * 0.01);
+  box(70, 70, 70);
+  pop();
+}
+
+function keyPressed() {
+  scene++;
+  if (scene > 3) {
+    scene = 1;
+  }
+}
