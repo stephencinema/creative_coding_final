@@ -1,11 +1,7 @@
 let canvas;
 let scene = 1;
 
-let scene1_text;
-let scene2_text;
-let scene3_text;
-let scene4_text;
-let scene5_text;
+let scene1_text, scene2_text, scene3_text;
 
 let cols, rows;
 let scl = 20;
@@ -15,10 +11,16 @@ let h = 1000;
 let flying = 0;
 let terrain = [];
 
+let scene1_sound, scene2_sound, scene3_sound;
+
 function centerCanvas() { // adapted from https://stackoverflow.com/q/58548249
   let x = (windowWidth - width) / 2;
   let y = (windowHeight - height) / 2;
   canvas.position(x, y);
+}
+
+function preload() {
+  scene1_sound = loadSound('assets/nosleepgolddreams.wav');
 }
 
 function setup() {
@@ -38,12 +40,13 @@ function setup() {
     }
   }
 
-  scene1_text = createGraphics(300, 300);
+  scene1_text = createGraphics(2000, 300);
   scene1_text.textFont('Helvetica');
+  scene1_text.textStyle(BOLD);
   scene1_text.textAlign(CENTER);
   scene1_text.textSize(40);
-  scene1_text.fill(255);
-  scene1_text.text('SCENE1', 150, 150);
+  scene1_text.fill(0, 0, 230);
+  scene1_text.text('NO SLEEP, HAVING GOLD DREAMS', 980, 150);
 
   scene2_text = createGraphics(300, 300);
   scene2_text.textFont('Helvetica');
@@ -55,11 +58,11 @@ function setup() {
 
 function draw() {
   if (scene == 1) {
-    background(0);
+    background(130, 130, 255);
     scene1();
     texture(scene1_text);
     noStroke();
-    plane(300, 300);
+    plane(2000, 300);
   }
 
   if (scene == 2) {
@@ -114,5 +117,13 @@ function keyPressed() {
   scene++;
   if (scene > 3) {
     scene = 1;
+  }
+}
+
+function mousePressed() {
+  if (scene == 1){
+    scene1_sound.play();
+    //scene1_sound.setVolume(0.5);
+    scene1_sound.loop();
   }
 }
