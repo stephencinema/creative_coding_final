@@ -25,7 +25,7 @@ let startInc = 0;
 
 let move = 0;
 
-function centerCanvas() { // adapted from https://stackoverflow.com/q/58548249
+function centerCanvas() {
   let x = (windowWidth - width) / 2;
   let y = (windowHeight - height) / 2;
   canvas.position(x, y);
@@ -55,7 +55,7 @@ function setup() {
   for (let x = 0; x < cols; x++) {
     terrain[x] = [];
     for (let y = 0; y < rows; y++) {
-      terrain[x][y] = 0; //specify a default value for now
+      terrain[x][y] = 20;
     }
   }
 
@@ -65,7 +65,7 @@ function setup() {
   scene1_text.textAlign(CENTER);
   scene1_text.textSize(40);
   scene1_text.fill(0, 0, 230);
-  scene1_text.text('NO SLEEP, HAVING GOLD DREAMS', 980, 150);
+  scene1_text.text('NO SLEEP, HAVING GOLD DREAMS', 980, 150); // message for scene 1
 
   scene2_text = createGraphics(2000, 300);
   scene2_text.textFont('Helvetica');
@@ -73,7 +73,7 @@ function setup() {
   scene2_text.textAlign(CENTER);
   scene2_text.textSize(40);
   scene2_text.fill(0, 0, 230);
-  scene2_text.text('INSTANT GRATIFICATION, YOU NEED', 980, 150);
+  scene2_text.text('INSTANT GRATIFICATION, YOU NEED', 980, 150); // message for scene 2
 
   scene3_text = createGraphics(2000, 300);
   scene3_text.textFont('Helvetica');
@@ -81,15 +81,15 @@ function setup() {
   scene3_text.textAlign(CENTER);
   scene3_text.textSize(40);
   scene3_text.fill(0, 0, 230);
-  scene3_text.text('REAL TIME REFLECTIONS', 980, 150);
+  scene3_text.text('REAL TIME REFLECTIONS', 980, 150); // message for scene 3
 }
 
 function draw() {
   let pitch = map(mouseY, 0.1, height, 2, 0);
-  pitch = constrain(pitch, 0.01, 4);
+  pitch = constrain(pitch, 0.01, 4); // lowers pitch of music when mouse goes lower, raises it when mouse goes higher
 
   let frames = map(mouseY, 1, height, 60, 0);
-  frames = constrain(frames, 1, 60);
+  frames = constrain(frames, 1, 60); // slows down canvas when mouse goes lower and vice versa
 
   if (scene == 1) {
     frameRate(60);
@@ -141,7 +141,7 @@ function scene1() { // code adapted from Daniel Shiffman https://thecodingtrain.
       xoff += 0.2;
     }
     yoff += 0.1;
-  }
+  } // movement for clouds
 
   push();
   translate(0, 50);
@@ -156,7 +156,7 @@ function scene1() { // code adapted from Daniel Shiffman https://thecodingtrain.
     }
     endShape();
   }
-  pop();
+  pop(); // shape for clouds
 
   push();
   translate(-400, -200, 100);
@@ -194,7 +194,7 @@ function scene2() {
       fill(0, 0, 230);
       plane(50, 50);
     }
-  }
+  } // squares representing sensory overload, move mouse up or down to move the squares
 } // end of scene 2 funtion
 
 function scene3() {
@@ -215,7 +215,7 @@ function scene3() {
     }
     yoff += inc;
     endShape();
-  }
+  } // representing the ocean
   zoff += zinc;
   start += startInc;
   pop();
@@ -229,7 +229,8 @@ function scene3() {
       box(70, 70, 70);
       pop();
     }
-  }
+  } // reflections of myself
+
   push();
   translate(270, 0, 100);
   rotateY(frameCount * 0.01);
