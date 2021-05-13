@@ -23,14 +23,7 @@ let minVal = -50;
 let maxVal = 50;
 let startInc = 0;
 
-const tileCount = 100;
-const noiseScale = 0.05;
-
-let grid;
-let xnoise;
-let ynoise;
-let t = 0;
-let r = 0;
+let move = 0;
 
 function centerCanvas() { // adapted from https://stackoverflow.com/q/58548249
   let x = (windowWidth - width) / 2;
@@ -44,6 +37,7 @@ function preload() {
   scene3_sound = loadSound('assets/realtimereflections.wav');
 
   img = loadImage('assets/pretty_soldier_sailor_moon_cover.png');
+  img2 = loadImage('assets/sailor.jpg');
 
   reflection = loadAnimation('assets/pretty_soldier_sailor_moon_cover.png', 'assets/trending_topic_cover.png');
 }
@@ -91,6 +85,12 @@ function setup() {
 }
 
 function draw() {
+  let pitch = map(mouseY, 0.1, height, 2, 0);
+  pitch = constrain(pitch, 0.01, 4);
+
+  let frames = map(mouseY, 1, height, 60, 0);
+  frames = constrain(frames, 1, 60);
+
   if (scene == 1) {
     frameRate(60);
     background(130, 130, 255);
@@ -98,6 +98,9 @@ function draw() {
     texture(scene1_text);
     noStroke();
     plane(2000, 300);
+
+    scene1_sound.rate(pitch);
+    frameRate(frames);
   }
 
   if (scene == 2) {
@@ -109,6 +112,9 @@ function draw() {
     texture(scene2_text);
     noStroke();
     plane(2000, 300);
+
+    scene2_sound.rate(pitch);
+    frameRate(frames);
   }
 
   if (scene == 3) {
@@ -119,19 +125,22 @@ function draw() {
     texture(scene3_text);
     noStroke();
     plane(2000, 300);
+
+    scene3_sound.rate(pitch);
+    frameRate(frames);
   }
 }
 
 function scene1() { // code adapted from Daniel Shiffman https://thecodingtrain.com/CodingChallenges/011-perlinnoiseterrain.html
   flying -= 0.1;
   var yoff = flying;
-  for (var y = 0; y < rows; y++) {
+  for (let y = 0; y < rows; y++) {
     var xoff = 0;
-    for (var x = 0; x < cols; x++) {
-      terrain[x][y] = map(noise(xoff, yoff), 0, 1, -100, 100);
+    for (let x = 0; x < cols; x++) {
+      terrain[x][y] = map(noise(xoff, yoff), 0, 1, -60, 150);
       xoff += 0.2;
     }
-    yoff += 0.2;
+    yoff += 0.1;
   }
 
   push();
@@ -139,14 +148,35 @@ function scene1() { // code adapted from Daniel Shiffman https://thecodingtrain.
   rotateX(PI / 3);
   fill(300, 200, 0, 150);
   translate(-w / 2, -h / 2);
-  for (var y = 0; y < rows - 1; y++) {
+  for (let y = 0; y < rows - 1; y++) {
     beginShape(TRIANGLE_STRIP);
-    for (var x = 0; x < cols; x++) {
+    for (let x = 0; x < cols; x++) {
       vertex(x * scl, y * scl, terrain[x][y]);
       vertex(x * scl, (y + 5) * scl, terrain[x][y + 6]);
     }
     endShape();
   }
+  pop();
+
+  push();
+  translate(-400, -200, 100);
+  rotateY(frameCount * 0.01);
+  texture(img2);
+  cone(70, 70);
+  pop();
+
+  push();
+  translate(0, -150, 100);
+  rotateY(frameCount * 0.01);
+  texture(img2);
+  cone(70, 70);
+  pop();
+
+  push();
+  translate(330, -200, 100);
+  rotateY(frameCount * 0.01);
+  texture(img2);
+  cone(70, 70);
   pop();
 } // end of scene 1 function
 
@@ -160,7 +190,7 @@ function scene2() {
       plane(50, 50);
       pop();
       translate(270, 0, 0);
-      rotateY(frameCount * 0.05);
+      rotateY(mouseY * 0.05);
       fill(0, 0, 230);
       plane(50, 50);
     }
@@ -176,7 +206,7 @@ function scene3() {
 
   fill(0, 0, 150);
   for (let y = 0; y < rows - 1; y++) {
-    let xoff = 0;
+    let xoff = 32;
     beginShape(TRIANGLE_STRIP);
     for (let x = 0; x < cols; x++) {
       vertex(x * scl, y * scl, map(noise(xoff, yoff, zoff), 0, 1, minVal, maxVal));
@@ -190,19 +220,25 @@ function scene3() {
   start += startInc;
   pop();
 
+  for (let x = -800; x < width; x += 200){
+    for (let y = -900; y < height; y += 400){
+      push();
+      translate(x, y);
+      rotateX(frameCount * 0.01);
+      texture(img);
+      box(70, 70, 70);
+      pop();
+    }
+  }
   push();
-  translate(240, 0, 100);
-  rotateZ(frameCount * 0.01);
-  rotateX(frameCount * 0.01);
+  translate(270, 0, 100);
   rotateY(frameCount * 0.01);
   texture(img);
   box(70, 70, 70);
   pop();
 
   push();
-  translate(-320, 0, 0);
-  rotateZ(frameCount * 0.01);
-  rotateX(frameCount * 0.01);
+  translate(-320, 0, 100);
   rotateY(frameCount * 0.01);
   texture(img);
   box(70, 70, 70);
@@ -233,19 +269,33 @@ function keyPressed() {
 function mousePressed() {
   if (scene == 1) {
     scene1_sound.play();
-    scene1_sound.setVolume(0.5);
+    scene1_sound.setVolume(0.3);
     //scene1_sound.loop();
   }
 
   if (scene == 2) {
     scene2_sound.play();
-    scene2_sound.setVolume(0.5);
+    scene2_sound.setVolume(0.3);
     //scene2_sound.loop();
   }
 
   if (scene == 3) {
     scene3_sound.play();
-    scene3_sound.setVolume(0.5);
+    scene3_sound.setVolume(0.3);
     //scene3_sound.loop();
+  }
+}
+
+function mouseReleased() {
+  if (scene == 1) {
+    scene1_sound.pause();
+  }
+
+  if (scene == 2) {
+    scene2_sound.pause();
+  }
+
+  if (scene == 3) {
+    scene3_sound.pause();
   }
 }
